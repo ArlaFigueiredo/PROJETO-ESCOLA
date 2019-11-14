@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #define TAM_DISCIPLINAS 3
+#define SUCESSO_CADASTRO 1
+#define ERRO_CADASTRO_CODIGO 2
+#define ERRO_CADASTRO_SEMESTRE 4
 
 
 typedef struct ficha_disciplina{
@@ -12,57 +14,126 @@ typedef struct ficha_disciplina{
 } Disciplina;
 
 void cadastra_disciplina(int J, Disciplina lista_disciplinas[TAM_DISCIPLINAS]) ;
-void imprime_disciplina(Disciplina lista_disciplinas[TAM_DISCIPLINAS]);
-void inicializar_lista(Disciplina lista_disciplinas[TAM_DISCIPLINAS]);
+void imprime_disciplina(Disciplina lista_disciplinas[], int G);
+void inicializar_lista(Disciplina lista_disciplinas[], int H);
+
 
 
 int main() {
     
     Disciplina lista_disciplinas[TAM_DISCIPLINAS];
-    int resposta=1;
     int i;
+    int qtd=0;
+    int sair=0;
+    int retorno=0;
     
-    inicializar_lista(lista_disciplinas);
+    inicializar_lista(lista_disciplinas, TAM_DISCIPLINAS);
+    
+    while (!sair){
+    
+    opcao = opcaoMenuDisciplinas();
+    
+    switch(opcao){
+      case 0:{
+        printf("VOLTANDO\n");
+        sair = 1;
+        break;
+      }
+      case 1: {
+        retorno = cadastra_disciplina(qtd, lista_disciplinas);
+        if (retorno == SUCESSO_CADASTRO){
+            printf("Cadastro realizado com sucesso\n");
+            qtd_alunos++;
+        }else{
+            switch(retorno) {
+                case ERRO_CADASTRO_MATRICULA:{
+                    printf("Matrícula Inválida");
+                    break;
+                }
+                case ERRO_CADASTRO_SEXO:{
+                    printf("Sexo Inválido");
+                    break;
+                }
+                default:{
+                    printf("Erro desconhecido!");
+                }
+               
+            }
+           printf("Não foi possível fazer o cadastro\n"); 
+            
+        }    
+        break;
+      }
+      case 2: {
+        listarAlunos(lista_aluno, qtd_alunos);
+        break;
+      }
+      default:{
+        printf("Opção Inválida\n");
+      }
+    }
+  }
     
     
     for (i = 0; i < TAM_DISCIPLINAS; i++){
         
-        cadastra_disciplina(TAM_DISCIPLINAS, lista_disciplinas);
-    
-        printf("DIGITE\n ");
-        printf("1- CADASTRAR ALUNO: \n");
-        printf("0- SAIR: \n");
-        scanf("%d", &resposta);
+        cadastra_disciplina(qtd, lista_disciplinas);
         
-        if(resposta == 0)
-            break;
+        qtd++;
     }
     
-    imprime_disciplina(lista_disciplinas);
+    imprime_disciplina(lista_disciplinas, qtd);
     
 	return 0;
 }
 
-void cadastra_disciplina(int J, Disciplina lista_disciplinas[TAM_DISCIPLINAS]){
+int opcaoMenuDisciplinas(){
+    int opcao;
+    printf("Digite a opção:\n");
+    printf("0 - Voltar a Menu Principal\n");
+    printf("1 - Inserir Disciplina\n");
+    printf("2 - Alterar Disciplinas\n");
+    printf("3 - Excluir Disciplinas\n");
+    printf("4 - Incluir/Excluir Aluno nas Disciplinas\n");
+    scanf("%d",&opcao);
+    return opcao;
+}
+
+int cadastra_disciplina(int J, Disciplina lista_disciplinas[TAM_DISCIPLINAS]){
+    
+    printf("\n### Cadastro de Disciplina ###\n");
+    
+    printf("Digite o codigo da Disciplina: ");
+    scanf("%d", &lista_disciplinas[J].codigo);
+    getchar();
+    
+    if (lista_disciplinas[J].codigo <= 0) {
+        return ERRO_CADASTRO_CODIGO;
+    }    
     
     printf("Nome da Disciplina: ");
     fgets(lista_disciplinas[J].nome, 30, stdin);
+    size_t ln = strlen(lista_disciplinas[J].nome) - 1; //size_t = unsigned integer type
+        if (lista_disciplinas[J].nome[ln] == '\n')
+          lista_disciplinas[J].nome[ln] = '\0';
 
-    printf("Digite o codigo da Disciplina: ");
-    fflush(stdin);
-    scanf("%d", &lista_disciplinas[J].codigo);
     
     printf("Digite o Semestre: ");
-    fflush(stdin);
     scanf("%d", &lista_disciplinas[J].semestre);
+    getchar();
     
-    printf("CADASTRADO EFETUADO COM SUCESSO!! ");
+    if (lista_disciplinas[J].semestre <= 0) {
+        return ERRO_CADASTRO_SEMESTRE;
+    }   
+    
+    
+    return SUCESSO_CADASTRO;
 
 }
 
-void imprime_disciplina(Disciplina lista_disciplinas[TAM_DISCIPLINAS]){
+void imprime_disciplina(Disciplina lista_disciplinas[], int G){
     int k;
-    for (k = 0; k < TAM_DISCIPLINAS; k++){
+    for (k = 0; k < G; k++){
         
         if ( lista_disciplinas[k].codigo != -1){
             
@@ -77,9 +148,9 @@ void imprime_disciplina(Disciplina lista_disciplinas[TAM_DISCIPLINAS]){
 
 }
 
-void inicializar_lista(Disciplina lista_disciplinas[TAM_DISCIPLINAS]){
+void inicializar_lista(Disciplina lista_disciplinas[], int H){
     int i;
-    for (i = 0; i < TAM_DISCIPLINAS; i++){
+    for (i = 0; i < H; i++){
         lista_disciplinas[i].codigo = -1;
     }
 
@@ -91,4 +162,3 @@ void inicializar_lista(Disciplina lista_disciplinas[TAM_DISCIPLINAS]){
     //gets(lista_disciplinas[i].aluno);
 
 //}
-
